@@ -1,0 +1,314 @@
+一、了解web的发展历程
+
+	静态的阶段	HTML、CSS、JS
+
+	动态的阶段	jsp、php、asp
+
+	web2.0		ajax、很多js（前端框架）
+
+	web3.0		完善、高智能化物联网、智能显示页面
+
+二、了解客户端、服务器以及HTTP协议
+
+	服务器：只安装某些服务的机器（并用来提供服务的机器）
+
+	服务器分类：
+
+		文件服务器、数据库服务器、应用服务器、web服务器、中间件服务器、邮件服务器等...
+
+	客户端：享受服务的机器
+
+	HTTP协议：
+
+		hyper text transfer protocol（超文本传输协议）
+
+		作用：用来统一客户端和服务器之间的通信规则
+
+		格式：
+
+			协议名://主机IP[:端口号]/资源路径
+
+		状态码：
+
+			401	访问权限受限	
+
+			404	访问资源路径不存在
+
+			500	服务器内部代码错误
+
+			200	请求交易成功（正常）
+
+			400	发送请求时的错误
+
+		请求方式：
+
+			get	请求数据放在url上，传输数据量比较小，不安全，效率高
+
+			post	请求数据放在请求体中，传输数据量理论上不受限制，安全性高，效率较低
+
+三、URL和URI
+
+	URL：uniform resources locator（统一资源定位符）
+
+		格式：
+
+			协议名://主机IP[:端口号]/资源路径
+
+	URI：uniform resources identifier（通用资源标识符）
+
+		格式：
+
+			协议名://[用户名][:密码@]主机IP[:端口号]/资源路径
+
+	URL是URI中的其中一种
+
+四、C/S和B/S架构
+
+	C/S：client/server(客户端/服务器端)
+
+	B/S：browser/server(浏览器端/服务器端)
+
+		区别：
+
+			B/S更方便维护，分布性强，开发成本低
+
+			C/S界面更美观，减轻服务器的压力，运行速度更快，交互性更强
+
+五、了解web服务器和应用服务器
+
+	web服务器（www服务器 world wide web）：主要是提供网上的信息的浏览服务，比如：百度、搜狐、apache、nginx、IIS
+
+	应用服务器：
+
+		tomcat服务器
+
+			内部结构
+
+				bin		提供了tomcat服务器的启动和关闭脚本
+
+				conf		配置信息，server.xml配置端口号
+
+				lib		放置tomcat服务器运行所依赖的jar包以及服务器内部运行的其他jar包
+
+				logs		放置日志文件
+
+				temp		放置临时文件
+
+				webapps		发布后的项目路径
+
+				work		jsp编译后的servlet
+
+		注意：使用tomcat之前必须安装并配置jdk环境
+
+		扩展：了解JBOSS、weblogic、websphere
+
+六、servlet基础
+
+	什么是servlet？
+
+		用java语言编写的程序，运行在服务器上，负责处理客户端的请求并动态给客户端响应
+
+	理解servlet的体系结构？
+
+		browser---服务器---servlet容器---servlet
+
+七、如何构建一个servlet？
+
+	两种方式：
+
+		手动
+
+			创建一个普通的Java类继承HttpServlet，并重写service方法（doget和dopost方法），然后配置web.xml
+
+		自动	
+
+			在创建的时候选择servlet并勾选上需要重写的服务的两个方法（doget和dopost）
+
+
+	servlet的生命周期
+
+		创建------初始化------服务------销毁
+
+		构造方法  init	      service   destroy	
+
+	servlet中的常用属性和方法
+
+		request
+
+			getParameter();通过表单中的name属性值获取表单元素的内容  如：<input type="text" name="userName"/>
+
+			getParameterValues();通过表单中的name属性值获取表单元素的内容.(用于复选框)
+
+			getParameterNames();获取请求参数名
+
+			getRequestDispatcher();内部跳转
+
+			getSession();获取会话对象
+
+			getCookies();获取所有的临时文件
+
+			setCharacterEncoding();设置request对象的编码格式
+
+		response
+
+			sendRedirect();外部跳转
+
+			setCharacterEncoding();设置response对象的编码格式
+
+			getWriter();获取out对象（页面输出流对象）
+
+			setContentType();设置response的内容类型
+
+			addCookie();在响应页面增加一个Cookie对象
+			
+			
+			//记住用户名和密码
+			HttpServletRequest request = ServletActionContext.getRequest();
+			Cookie cookies[]=request.getCookies();//声明一个cookie对象
+			String login=null;//登录的用户名 
+			String password=null; //登录的密码
+			for (int i = 0; i < cookies.length; i++){   //取最后一次保存的用户名和密码
+				if(cookies[i].getName().equals("userName")){
+						 login = cookies[i].getValue();
+				 }
+				if (cookies[i].getName().equals("password")){
+					 password = cookies[i].getValue();
+					 break;
+				}
+				}
+				if(!AssertUtil.isEmpty(login)&&!login.equals("JSESSIONID")){
+				request.setAttribute("login", login);
+				request.setAttribute("password", password);
+			}
+
+
+				
+
+Servlet
+	
+	request.getRequestDispatcher()内部跳转
+
+	response.sendRedirect()外部跳转
+
+	区别？
+
+		内部跳转地址栏不变，request对象中保存的值不会丢失，发起一次请求
+
+		外部跳转地址栏改变，request对象中保存的值会被清空，发起两次请求
+
+中文乱码处理	
+
+	请求对象
+
+		post提交
+
+			request.setCharacterEnconding("编码格式")
+
+		get方式提交
+
+			String name = new String(request.getParameter("userName").getBytes("ISO-8859-1"),"UTF-8");
+
+	响应对象
+
+		response.setCharacterEncoding("编码格式")
+
+		response.setContentType("text/html;charset=UTF-8");
+
+JSP
+
+	java server pages(java服务器页面)
+
+	为什么使用jsp？
+
+	JSP的运行原理：
+
+		客户端（client）---（请求jsp页面）---服务器---（服务器向JSP解释引擎发出请求）---jsp解释引擎---（jsp解释引擎将解释结果返回给服务器）
+
+		---服务器---（将jsp程序执行结果以HTML的形式发送给客户端）---客户端（client）
+
+	JSP的组成部分
+
+		静态内容（模板元素）---HTML静态文本
+
+		注释
+
+			显示注释
+
+				在浏览器上通过查看源代码的形式能够看见的注释
+
+				<!--  -->
+
+			隐式注释
+
+				在浏览器上通过查看源代码的形式不能够看见的注释
+
+				<%--  --%>
+
+		脚本元素
+
+			<%java代码%>
+
+			<%=表达式%>
+
+				类似于out
+
+			<%!声明%>
+
+			<%@指令%>
+
+	JSP的内置对象
+
+		page		当前页面对象
+
+		pageContext	页面上下文对象
+
+		request		请求对象
+
+		response	响应对象
+
+		session		会话对象（从客户端发送请求开始到客户端与服务器断开连接[或者是达到会话默认/设置的过期时间]为一次会话）
+
+		application	应用程序对象(服务器对象)
+
+		out		页面输出流对象
+
+		exception	异常对象
+
+		config		配置对象
+
+	作用域
+
+		page		当前页面有效
+
+		request		整个服务器内部请求范围
+
+		session		整个会话中都有效
+
+		application	整个应用程序都有效
+
+扩展
+
+	JSON---对象数组
+
+	存储数据的形式：
+
+		{name:"张三",age:20,sex:"男"}
+
+		{
+		  [name:"张三",age:20,sex:"男"],
+		  [name:"李四",age:21,sex:"女"]
+		}
+
+	用法：jquery的ajax中讲解
+
+
+		
+
+
+
+
+
+
+			
+
+		
